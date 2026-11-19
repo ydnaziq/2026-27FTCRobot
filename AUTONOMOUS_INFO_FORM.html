@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FTC Autonomous Planning Form</title>
+  <style>
+    :root { color-scheme: light; --ink:#17212b; --muted:#526171; --line:#ccd5df; --accent:#145b9a; --paper:#fff; --bg:#f2f5f8; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    main { max-width:900px; margin:32px auto; padding:0 18px; }
+    header, fieldset { background:var(--paper); border:1px solid var(--line); border-radius:10px; }
+    header { padding:24px; margin-bottom:18px; }
+    h1 { margin:0 0 8px; font-size:1.8rem; }
+    header p { margin:0; color:var(--muted); }
+    fieldset { padding:20px; margin:18px 0; }
+    legend { padding:0 8px; font-size:1.2rem; font-weight:700; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .full { grid-column:1/-1; }
+    label { display:block; font-weight:600; }
+    label small { display:block; color:var(--muted); font-weight:400; }
+    input, select, textarea { display:block; width:100%; margin-top:5px; padding:10px 11px; border:1px solid #9eacba; border-radius:6px; background:white; color:var(--ink); font:inherit; }
+    textarea { min-height:88px; resize:vertical; }
+    input:focus, select:focus, textarea:focus, button:focus { outline:3px solid #8fc4f4; outline-offset:1px; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; min-width:650px; }
+    th,td { border:1px solid var(--line); padding:8px; text-align:left; }
+    th { background:#edf2f7; }
+    td input { margin:0; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 36px; }
+    button { padding:10px 16px; border:0; border-radius:6px; background:var(--accent); color:white; font:600 1rem inherit; cursor:pointer; }
+    button.secondary { background:#435466; }
+    button.remove { background:#8d3030; padding:7px 10px; }
+    .hint { color:var(--muted); }
+    @media(max-width:620px) { .grid { grid-template-columns:1fr; } .full { grid-column:auto; } main { margin-top:14px; } }
+    @media print { body { background:#fff; } main { max-width:none; margin:0; } fieldset,header { break-inside:avoid; } .actions,.remove-col { display:none; } input,select,textarea { border-color:#8995a1; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>FTC Autonomous Planning Form</h1>
+    <p>Fill in what you know. Leave unknown items blank. Use the route and notes fields for sketches or details, and attach photos or configuration screenshots when sharing this form.</p>
+  </header>
+  <form id="autonomous-form">
+    <fieldset><legend>1. Drivetrain</legend><div class="grid">
+      <label>Drivetrain type<input name="drivetrain_type" placeholder="Tank, mecanum, other"></label>
+      <label>Motor names in Robot Controller<input name="motor_names" placeholder="left_drive, right_drive"></label>
+      <label class="full">Motor ports and positions<textarea name="motor_ports" placeholder="For example: Expansion Hub port 0 = front-left motor"></textarea></label>
+      <label>Motor directions for forward<input name="motor_directions"></label>
+      <label>Encoder availability/type<input name="encoders" placeholder="Motor encoders, odometry pods, none"></label>
+      <label>Wheel diameter<input name="wheel_diameter" placeholder="Include units"></label>
+      <label>Motor-to-wheel gear reduction<input name="gear_reduction"></label>
+      <label>Track width<input name="track_width" placeholder="Left-to-right spacing; include units"></label>
+      <label>Wheelbase<input name="wheelbase" placeholder="Front-to-back spacing; include units"></label>
+      <label class="full">Drive tests or calibration results<textarea name="drive_calibration"></textarea></label>
+    </div></fieldset>
+
+    <fieldset><legend>2. Sensors and Localization</legend><div class="grid">
+      <label>IMU model and mounting orientation<input name="imu"></label>
+      <label>Odometry hardware and placement<input name="odometry"></label>
+      <label>Camera model and mounting position/orientation<input name="camera"></label>
+      <label>AprilTags or field targets to use<input name="targets"></label>
+      <label class="full">Other sensors and configured names<textarea name="other_sensors" placeholder="Distance, color, touch sensors, etc."></textarea></label>
+      <label class="full">Preferred localization method<input name="localization_method" placeholder="If known: encoders, IMU, odometry, vision, combination"></label>
+    </div></fieldset>
+
+    <fieldset><legend>3. Mechanisms</legend><p class="hint">Add one row per mechanism. Include its configured hardware names and the desired safe state at the end of autonomous.</p>
+      <div class="table-wrap"><table><thead><tr><th>Mechanism / purpose</th><th>Hardware type and names</th><th>Starting state</th><th>Desired action and safe ending state</th><th class="remove-col">Remove</th></tr></thead>
+      <tbody id="mechanism-rows"></tbody></table></div>
+      <div class="actions"><button type="button" class="secondary" id="add-mechanism">Add mechanism</button></div>
+      <label>Limits, sensors, encoder targets, or safety constraints<textarea name="mechanism_constraints"></textarea></label>
+    </fieldset>
+
+    <fieldset><legend>4. Autonomous Plan</legend><div class="grid">
+      <label>Competition/game and season<input name="competition"></label>
+      <label>Alliance<select name="alliance"><option value=""></option><option>Red</option><option>Blue</option><option>Other / not decided</option></select></label>
+      <label>Starting location / tile<input name="starting_location"></label>
+      <label>Starting orientation<input name="starting_orientation"></label>
+      <label class="full">Starting configuration of mechanisms<textarea name="starting_configuration"></textarea></label>
+      <label class="full">Planned route<textarea name="route" placeholder="List steps in order; a route sketch can be attached separately."></textarea></label>
+      <label>Scoring goals and priorities<textarea name="scoring_goals"></textarea></label>
+      <label>Field objects or targets to interact with<textarea name="field_targets"></textarea></label>
+      <label>Parking or end-of-period goal<input name="end_goal"></label>
+      <label>Expected autonomous time available<input name="autonomous_time" placeholder="Seconds, if known"></label>
+      <label class="full">Field variants or mirrored routes to support<textarea name="field_variants"></textarea></label>
+    </div></fieldset>
+
+    <fieldset><legend>5. Control and Reliability Preferences</legend><div class="grid">
+      <label>Preferred control approach<select name="control_approach"><option value=""></option><option>Timed drive</option><option>Encoder distances</option><option>IMU heading</option><option>Odometry</option><option>Vision</option><option>Combination</option><option>Not sure yet</option></select></label>
+      <label>Speed / accuracy preference<input name="speed_accuracy" placeholder="For example: prioritize repeatability over speed"></label>
+      <label class="full">What should happen if a sensor or mechanism fails?<textarea name="failure_behavior"></textarea></label>
+      <label class="full">Selectable starting sides, alliances, or strategies<textarea name="selection_options"></textarea></label>
+    </div></fieldset>
+
+    <fieldset><legend>6. Build and Test Setup</legend><div class="grid">
+      <label>Control Hub or Robot Controller phone model<input name="robot_controller"></label>
+      <label>Driver Station device and gamepad setup<input name="driver_station"></label>
+      <label>Android Studio / Java setup<input name="software_setup"></label>
+      <label>Hardware available for testing<input name="test_hardware"></label>
+      <label>Practice field or area available<input name="practice_area" placeholder="Full field, partial field, tiles, measured distances"></label>
+      <label>Safe setup for initial tests<input name="safe_test_setup" placeholder="How can wheels/mechanisms be safely supported or disabled?"></label>
+      <label class="full">Additional notes<textarea name="additional_notes"></textarea></label>
+    </div></fieldset>
+
+    <fieldset><legend>Attachments to include when sharing</legend>
+      <p class="hint">Attach separately: wiring and port map, Robot Controller configuration screenshots/export, dimensioned top-down robot sketch, route sketch, and robot/mechanism photos.</p>
+      <label>Attachment names or links<textarea name="attachments" placeholder="List filenames or links to the files you are sharing"></textarea></label>
+    </fieldset>
+    <div class="actions">
+      <button type="button" id="download-json">Download answers (JSON)</button>
+      <button type="button" class="secondary" onclick="window.print()">Print / Save as PDF</button>
+      <button type="reset" class="secondary">Clear form</button>
+    </div>
+  </form>
+</main>
+<script>
+  const rows = document.getElementById('mechanism-rows');
+  function addMechanismRow() {
+    const row = document.createElement('tr');
+    row.innerHTML = '<td><input aria-label="Mechanism or purpose"></td><td><input aria-label="Hardware type and names"></td><td><input aria-label="Starting state"></td><td><input aria-label="Desired action and safe ending state"></td><td class="remove-col"><button type="button" class="remove" aria-label="Remove mechanism row">Remove</button></td>';
+    row.querySelector('button').addEventListener('click', () => row.remove());
+    rows.appendChild(row);
+  }
+  document.getElementById('add-mechanism').addEventListener('click', addMechanismRow);
+  addMechanismRow();
+
+  document.getElementById('download-json').addEventListener('click', () => {
+    const form = document.getElementById('autonomous-form');
+    const answers = {};
+    for (const [key, value] of new FormData(form)) answers[key] = value;
+    answers.mechanisms = [...rows.querySelectorAll('tr')].map(row =>
+      [...row.querySelectorAll('input')].map(input => input.value.trim())
+    ).filter(values => values.some(Boolean)).map(([purpose, hardware, start, action]) => ({ purpose, hardware, start, action }));
+    const blob = new Blob([JSON.stringify(answers, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const link = Object.assign(document.createElement('a'), {href:url, download:'autonomous-planning-answers.json'});
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+</script>
+</body>
+</html>
